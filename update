@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (( $# == 0 )); then
+  set -- cherry-studio wordcraft gridcraft lyrune freshgram
+fi
+
+for package in "$@"; do
+  nix-update --file packages.nix "$package" \
+    --version-regex '^(v?[0-9]+\.[0-9]+\.[0-9]+)$' \
+    --use-github-releases --github-releases-limit 100 \
+    --override-filename "packages/$package.nix" --build
+done
