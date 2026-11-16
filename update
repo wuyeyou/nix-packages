@@ -6,8 +6,21 @@ if (( $# == 0 )); then
 fi
 
 for package in "$@"; do
+  case "$package" in
+    cherry-studio|wordcraft|gridcraft|lyrune|freshgram) ;;
+    *) printf 'Unknown package: %s\n' "$package" >&2; exit 2 ;;
+  esac
+
+  before=$(nix eval --raw --no-update-lock-file --no-write-lock-file ".#$package.version")
   nix-update --file packages.nix "$package" \
     --version-regex '^(v?[0-9]+\.[0-9]+\.[0-9]+)$' \
     --use-github-releases --github-releases-limit 100 \
-    --override-filename "packages/$package.nix" --build
+    --override-filename "packages/$package.nix"
+  after=$(nix eval --raw --no-update-lock-file --no-write-lock-file ".#$package.version")
+
+  if [[ "$before" == "$after" ]]; then
+    printf '%s: already at %s\n' "$package" "$before"
+  else
+    nix build --no-link --no-update-lock-file --no-write-lock-file ".#$package"
+  fi
 done
