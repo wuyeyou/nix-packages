@@ -1,23 +1,34 @@
-{ fetchurl, appimageTools, wayland }:
+{
+  lib, stdenvNoCC, fetchurl, dpkg, autoPatchelfHook, libgcc,
+  alsa-lib, libxcb, libxkbcommon,
+  dbus, fontconfig, glib, libglvnd, libx11, libxcursor, libxi, libxrandr,
+  vulkan-loader, wayland,
+}:
 
-appimageTools.wrapType2 (finalAttrs: {
+stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "lyrune";
   version = "1.7.4";
 
   src = fetchurl {
-    url = "https://github.com/amtoaer/lyrune/releases/download/v${finalAttrs.version}/lyrune-v${finalAttrs.version}-linux-amd64.AppImage";
-    hash = "sha256-ccx/diqJabs9xj0rWJA5OxeDuw83PBiyyBlqolg635Y=";
+    url = "https://github.com/amtoaer/lyrune/releases/download/v${finalAttrs.version}/lyrune-v${finalAttrs.version}-linux-amd64.deb";
+    hash = "sha256-9UfLI0MeHVn5GSDcnrwVnFWW5N/ChacKwBOWupEzZsw=";
   };
 
-  # The bundled Wayland client lacks symbols required by current Mesa drivers.
-  profile = ''
-    export LD_PRELOAD="${wayland}/lib/libwayland-client.so.0''${LD_PRELOAD:+:$LD_PRELOAD}"
-  '';
+  dontUnpack = true;
+  nativeBuildInputs = [ dpkg autoPatchelfHook ];
+  buildInputs = [ libgcc alsa-lib libxcb libxkbcommon ];
+  # Graphics and desktop libraries may be opened dynamically.
+  runtimeDependencies = [
+    dbus fontconfig glib libglvnd libx11 libxcursor libxi libxrandr
+    vulkan-loader wayland
+  ];
 
-  extraInstallCommands = ''
-    install -Dm444 ${finalAttrs.contents}/usr/share/applications/lyrune.desktop \
-      $out/share/applications/lyrune.desktop
-    cp -r ${finalAttrs.contents}/usr/share/icons $out/share/
+  installPhase = ''
+    runHook preInstall
+    dpkg-deb -x "$src" unpacked
+    mkdir -p "$out"
+    cp -r unpacked/usr/. "$out/"
+    runHook postInstall
   '';
 
   meta = {
@@ -25,5 +36,6 @@ appimageTools.wrapType2 (finalAttrs: {
     homepage = "https://github.com/amtoaer/lyrune";
     platforms = [ "x86_64-linux" ];
     mainProgram = "lyrune";
+    sourceProvenance = [ lib.sourceTypes.binaryNativeCode ];
   };
 })

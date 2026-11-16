@@ -1,15 +1,41 @@
-{ fetchFromGitHub, wordcraft }:
+{
+  lib, stdenvNoCC, fetchurl, dpkg, autoPatchelfHook, libgcc,
+  dbus, libx11, libxcb, libxcursor, libxi, libxkbcommon, libxrandr,
+  vulkan-loader, wayland,
+}:
 
-wordcraft.overrideAttrs (finalAttrs: previousAttrs: {
+stdenvNoCC.mkDerivation (finalAttrs: {
+  pname = "wordcraft";
   version = "0.18.1";
-  src = fetchFromGitHub {
-    owner = "storytold";
-    repo = "wordcraft";
-    rev = "v${finalAttrs.version}";
-    hash = "sha256-n8BQIiX6C3D8pd8pil/reM/ffSW+cPEsI/OuQSUrYus=";
+
+  src = fetchurl {
+    url = "https://github.com/storytold/wordcraft/releases/download/v${finalAttrs.version}/wordcraft-${finalAttrs.version}-linux-x86_64.deb";
+    hash = "sha256-m1VxYd7XtZcxEsjCH2AP4LARDBpNMVEYRIVzPJb4fhk=";
   };
-  cargoHash = "sha256-gsiSbjdpjKKtWfYr2xcyLiGWamy7qGGSKOraRvnaVAM=";
-  meta = previousAttrs.meta // {
+
+  dontUnpack = true;
+  nativeBuildInputs = [ dpkg autoPatchelfHook ];
+  buildInputs = [ libgcc ];
+  # Match the Nixpkgs package's libraries loaded by winit, wgpu and rfd.
+  runtimeDependencies = [
+    dbus libx11 libxcb libxcursor libxi libxkbcommon libxrandr vulkan-loader wayland
+  ];
+
+  installPhase = ''
+    runHook preInstall
+    dpkg-deb -x "$src" unpacked
+    mkdir -p "$out"
+    cp -r unpacked/usr/. "$out/"
+    runHook postInstall
+  '';
+
+  meta = {
+    description = "Word processor with DOCX, ODT and RTF support";
+    homepage = "https://github.com/storytold/wordcraft";
     changelog = "https://github.com/storytold/wordcraft/releases/tag/v${finalAttrs.version}";
+    license = with lib.licenses; AND [ (OR [ mit asl20 ]) ofl cc0 publicDomain ];
+    platforms = [ "x86_64-linux" ];
+    mainProgram = "wordcraft";
+    sourceProvenance = [ lib.sourceTypes.binaryNativeCode ];
   };
 })
