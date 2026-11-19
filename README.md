@@ -1,6 +1,8 @@
 # nix-packages
 
-个人维护的公开 Nix Flake 软件包集合。软件来自上游官方发布的二进制包，并完成 NixOS 适配。不同软件沿用上游提供的 Deb 或 AppImage。当前只支持 `x86_64-linux`，并自动跟踪上游稳定版本。
+个人维护的公开 Nix Flake 软件包集合，供自己日常使用。软件来自上游官方发布的二进制包，并完成 NixOS 适配。当前只支持 `x86_64-linux`，并自动跟随上游 Release 更新。
+
+不同软件发布的安装包后缀，在依赖数量和维护成本上差别很大。为减少这些麻烦并保持较好的可维护性，各软件分别采用更合适的 Deb 或 AppImage，而不是统一成同一种格式。
 
 ## 可用软件
 
@@ -12,20 +14,32 @@
 | Lyrune | <https://github.com/amtoaer/lyrune> | `lyrune` | Deb |
 | freshGram | <https://github.com/Snowy-Fluffy/freshGram> | `freshgram` | AppImage |
 
-下面的示例使用 `lyrune`。它可以替换为表中的其他输出名称。
-
 ## 安装与使用
+
+把 `包名` 换成上一节表格中的 Flake 输出。每节先给出通用写法，再以 Cherry Studio 为例。
 
 ### 直接运行
 
 ```bash
-nix run github:wuyeyou/nix-packages#lyrune
+nix run github:wuyeyou/nix-packages#包名
+```
+
+例如：
+
+```bash
+nix run github:wuyeyou/nix-packages#cherry-studio
 ```
 
 ### 安装到用户 Profile
 
 ```bash
-nix profile install github:wuyeyou/nix-packages#lyrune
+nix profile install github:wuyeyou/nix-packages#包名
+```
+
+例如：
+
+```bash
+nix profile install github:wuyeyou/nix-packages#cherry-studio
 ```
 
 ### NixOS Flake 声明式安装
@@ -58,9 +72,15 @@ nix profile install github:wuyeyou/nix-packages#lyrune
 { pkgs, inputs, ... }:
 {
   environment.systemPackages = [
-    inputs.nix-packages.packages.${pkgs.stdenv.hostPlatform.system}.lyrune
+    inputs.nix-packages.packages.${pkgs.stdenv.hostPlatform.system}.包名
   ];
 }
+```
+
+安装 Cherry Studio 时写成：
+
+```nix
+inputs.nix-packages.packages.${pkgs.stdenv.hostPlatform.system}.cherry-studio
 ```
 
 `inputs.nixpkgs.follows` 让这些软件使用系统的 Nixpkgs。不设置 `follows` 时，软件使用本仓库 `flake.lock` 锁定的 Nixpkgs。
@@ -77,7 +97,7 @@ GitHub Actions 每天北京时间 09:37 检查上游 GitHub Releases 中的常�
 
 ```bash
 nix develop -c ./update
-nix develop -c ./update lyrune
+nix develop -c ./update cherry-studio
 ```
 
 命令选择上游正式发布的常规版本，并更新版本与哈希；只有版本变化时才构建对应输出。它不会提交。失败时可能留下已修改的包定义，提交前检查 `git diff`。
@@ -85,7 +105,7 @@ nix develop -c ./update lyrune
 构建但不安装：
 
 ```bash
-nix build --no-link .#lyrune
+nix build --no-link .#cherry-studio
 ```
 
 新增软件时：
