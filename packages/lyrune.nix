@@ -7,11 +7,11 @@
 
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "lyrune";
-  version = "1.7.4";
+  version = "1.8.0";
 
   src = fetchurl {
     url = "https://github.com/amtoaer/lyrune/releases/download/v${finalAttrs.version}/lyrune-v${finalAttrs.version}-linux-amd64.deb";
-    hash = "sha256-9UfLI0MeHVn5GSDcnrwVnFWW5N/ChacKwBOWupEzZsw=";
+    hash = "sha256-RfNMo7tMearTd1wfXlVhwVAq/bxsTsf2OSYD2YDLmdc=";
   };
 
   dontUnpack = true;
