@@ -12,7 +12,7 @@
 | WordCraft | <https://github.com/storytold/wordcraft> | `wordcraft` | Deb |
 | GridCraft | <https://github.com/storytold/gridcraft> | `gridcraft` | Deb |
 | Lyrune | <https://github.com/amtoaer/lyrune> | `lyrune` | Deb |
-| freshGram | <https://github.com/Snowy-Fluffy/freshGram> | `freshgram` | AppImage |
+| FreshGram | <https://github.com/Snowy-Fluffy/freshGram> | `freshgram` | AppImage |
 
 ## 安装与使用
 
