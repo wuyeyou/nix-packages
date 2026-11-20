@@ -6,7 +6,7 @@
 
 ## 可用软件
 
-| 软件 | 上游 | Flake 输出 | 打包方式 |
+| 软件 | 上游 | Flake 包名 | 打包方式 |
 | --- | --- | --- | --- |
 | Cherry Studio | <https://github.com/CherryHQ/cherry-studio> | `cherry-studio` | AppImage |
 | WordCraft | <https://github.com/storytold/wordcraft> | `wordcraft` | Deb |
