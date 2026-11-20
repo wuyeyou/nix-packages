@@ -2,11 +2,11 @@
 
 appimageTools.wrapType2 (finalAttrs: {
   pname = "cherry-studio";
-  version = "2.2.2";
+  version = "2.2.3";
 
   src = fetchurl {
     url = "https://github.com/CherryHQ/cherry-studio/releases/download/v${finalAttrs.version}/Cherry-Studio-${finalAttrs.version}-linux-x64.AppImage";
-    hash = "sha256-qv0XMc1qqpnMzi9bgzP7BuFPKpt8A6RsPNVvB/OnQBs=";
+    hash = "sha256-bBQwsdfzkDlgYwuE3KROWbP3CnuK8hJaGzDT+ZqkXLs=";
   };
 
   extraInstallCommands = ''
