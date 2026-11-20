@@ -77,7 +77,7 @@ nix profile install github:wuyeyou/nix-packages#cherry-studio
 }
 ```
 
-安装 Cherry Studio 时写成：
+例如，安装 Cherry Studio 时写成：
 
 ```nix
 inputs.nix-packages.packages.${pkgs.stdenv.hostPlatform.system}.cherry-studio
